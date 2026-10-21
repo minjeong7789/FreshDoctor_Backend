@@ -63,6 +63,9 @@ public class PriceHistory {
     @Column(name = "market_type", nullable = false)
     private String marketType = "UNKNOWN";
 
+    @Column(name = "source", nullable = false)
+    private String source = "KAMIS";
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 

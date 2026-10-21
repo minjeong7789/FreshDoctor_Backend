@@ -82,7 +82,7 @@ public class NaverNewsService {
     @Transactional(readOnly = true)
     public List<NewsResponse> getNews(String itemCode) {
         itemService.getItem(itemCode);
-        return newsArticleRepository.findTop20ByItemCodeAndRepresentativeRiskFalseOrderByPublishedAtDescCreatedAtDesc(itemCode)
+        return newsArticleRepository.findByItemCodeAndRepresentativeRiskFalseOrderByPublishedAtDescCreatedAtDesc(itemCode)
                 .stream()
                 .map(NewsResponse::from)
                 .toList();

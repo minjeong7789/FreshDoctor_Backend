@@ -59,7 +59,9 @@ public class RiskScoreService {
     @Transactional(readOnly = true)
     public RiskScoreResponse getLatest(String itemCode) {
         itemService.getItem(itemCode);
-        return riskScoreRepository.findTopByItemCodeOrderByScoreDateDescIdDesc(itemCode)
+        return riskScoreRepository.findTopByItemCodeAndScoreDateLessThanEqualOrderByScoreDateDescIdDesc(
+                        itemCode, LocalDate.now()
+                )
                 .map(RiskScoreResponse::from)
                 .orElse(null);
     }
