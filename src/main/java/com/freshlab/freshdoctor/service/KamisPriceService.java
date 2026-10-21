@@ -56,17 +56,14 @@ public class KamisPriceService {
     @Value("${kamis.api.cert-id}")
     private String certId;
 
-    @Transactional
     public KamisPriceCollectResult collectDailyPrice(String itemCode) {
         return collectDailyPrice(itemCode, null);
     }
 
-    @Transactional
     public KamisPriceCollectResult collectDailyPrice(String itemCode, LocalDate regDate) {
         return collectDailyPrice(itemCode, regDate, null, null, null, null, null, null, null);
     }
 
-    @Transactional
     public KamisPriceCollectResult collectDailyPrice(
             String itemCode,
             LocalDate regDate,
@@ -420,7 +417,12 @@ public class KamisPriceService {
         }
         history.setUnit(unit);
         history.setMarketType(marketType);
-        priceHistoryRepository.save(history);
+        history.setSource("KAMIS");
+        // Do not keep a single transaction open for the complete KAMIS response.
+        // If one malformed row violates a database constraint, saveAndFlush throws
+        // here and the caller can return a failed result without leaving its
+        // transaction rollback-only (which previously turned the whole request into 500).
+        priceHistoryRepository.saveAndFlush(history);
     }
 
     private void collectPeriodRows(JsonNode node, KamisRequest request, List<KamisPriceRow> rows) {
